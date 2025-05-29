@@ -7,7 +7,7 @@
         :key="prize.position" 
         class="prize-item"
       >
-        {{ prize.position }}: {{ prize.amount }} TICKETS
+        Rank {{ prize.rank }}: {{ prize.prize }} {{prize.note}}
       </div>
     </div>
   </div>
@@ -39,7 +39,7 @@ export default {
     shouldShowPrizePool() {
       // Always show for now as requested
       // Later will implement: currentLevel > regCloseLevel
-      return this.forceShow || (this.prizePool && this.prizePool.length > 0);
+      return this.forceShow || (this.prizePool && this.currentLevel >= this.regCloseLevel);
     }
   }
 }
@@ -52,7 +52,7 @@ export default {
 }
 
 .prize-label {
-  font-size: 1.3125rem;
+  font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 8px;
   color: #ffffff;
@@ -66,7 +66,7 @@ export default {
 }
 
 .prize-item {
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   color: #fff;
   font-weight: 600;
   letter-spacing: 0.3px;

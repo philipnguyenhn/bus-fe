@@ -377,10 +377,10 @@ onUnmounted(() => {
                 <div class="right-column">
                   <!-- Prize pool -->
                   <TournamentPrizePool 
-                    :prizePool="tournament.prizePool" 
+                    :prizePool="tournament.prize_pool" 
                     :currentLevel="tournament.current_level" 
                     :regCloseLevel="tournament.reg_close_level"
-                    :forceShow="true" 
+                    :forceShow="false" 
                   />
         </div>
       </div>

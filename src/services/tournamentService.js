@@ -15,7 +15,6 @@ async function getTournamentById(id) {
         console.log('Successfully fetched data from screen endpoint');
         // Add mock prize pool data to the tournament data
         const tournamentData = screenResult.data;
-        tournamentData.prizePool = getMockPrizePool(id);
         // Flag to always show prize pool for now (later will depend on current_level > reg_close_level)
         tournamentData.showPrizePool = true;
         return tournamentData;
