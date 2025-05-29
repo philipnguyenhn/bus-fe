@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getTournamentById } from '../services/tournamentService';
+import TournamentPrizePool from "@/components/TournamentPrizePool.vue";
 
 const tournament = ref(null);
 const loading = ref(true);
@@ -372,13 +373,15 @@ onUnmounted(() => {
           </div>
         </div>
         
-        <!-- Right prize pool column (hidden) -->
-        <div class="right-column" v-if="false">
-          <!-- Prize pool -->
-          <div class="prize-pool-container">
-            <div class="prize-label">PRIZE POOL</div>
-            <div class="prize-value">{{ typeof tournament.prize_pool === 'number' ? tournament.prize_pool.toLocaleString() : 0 }}</div>
-          </div>
+        <!-- Right prize pool column -->
+                <div class="right-column">
+                  <!-- Prize pool -->
+                  <TournamentPrizePool 
+                    :prizePool="tournament.prizePool" 
+                    :currentLevel="tournament.current_level" 
+                    :regCloseLevel="tournament.reg_close_level"
+                    :forceShow="true" 
+                  />
         </div>
       </div>
     </div>

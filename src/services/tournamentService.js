@@ -13,7 +13,12 @@ async function getTournamentById(id) {
       const screenResult = await screenResponse.json();
       if (screenResult && screenResult.data) {
         console.log('Successfully fetched data from screen endpoint');
-        return screenResult.data;
+        // Add mock prize pool data to the tournament data
+        const tournamentData = screenResult.data;
+        tournamentData.prizePool = getMockPrizePool();
+        // Flag to always show prize pool for now (later will depend on current_level > reg_close_level)
+        tournamentData.showPrizePool = true;
+        return tournamentData;
       }
     }
     
@@ -52,7 +57,12 @@ async function getTournamentById(id) {
     const clockResult = await clockResponse.json();
     if (clockResult && clockResult.data) {
       console.log('Successfully fetched data from clock endpoint');
-      return clockResult.data;
+      // Add mock prize pool data to the tournament data
+      const tournamentData = clockResult.data;
+      tournamentData.prizePool = getMockPrizePool();
+      // Flag to always show prize pool for now (later will depend on current_level > reg_close_level)
+      tournamentData.showPrizePool = true;
+      return tournamentData;
     } else {
       const errorMessage = (clockResult && clockResult.message) ? clockResult.message : 'Malformed API response or no data field.';
       console.error(`API error for tournament ${id}: ${errorMessage}`, clockResult);
@@ -71,11 +81,25 @@ const API_HOST = 'https://new.buscoffeeandtea.com.vn';
 
 const API_BASE_URL = `${API_HOST}/api/v1`; // Direct API URL for production use
 
+// Mock prize pool data until it's available from the API
+function getMockPrizePool() {
+  return [
+    { position: 1, amount: 10 },
+    { position: 2, amount: 8 },
+    { position: 3, amount: 7 },
+    { position: 4, amount: 6 },
+    { position: 5, amount: 5 },
+    { position: '6-8', amount: 4 },
+    { position: '9-12', amount: 3 }
+  ];
+}
+
 // Named export for getTournamentById
-export { getTournamentById };
+export { getTournamentById, getMockPrizePool };
 
 export default {
   getTournamentById,
+  getMockPrizePool,
   // The following methods relied on mockTournaments and are now commented out.
   // They would need to be updated to work with a live API.
   /*
