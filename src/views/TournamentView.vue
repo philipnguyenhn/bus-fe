@@ -49,17 +49,36 @@ const formattedNextBlinds = computed(() => {
 });
 
 const parseTimeToSeconds = (timeString) => {
-  const [minutes, seconds] = timeString.split(':').map(Number);
+  const parts = timeString.split(':').map(Number);
+
+  // Handle HH:MM:SS format
+  if (parts.length === 3) {
+    const [hours, minutes, seconds] = parts;
+    return (hours * 60 * 60) + (minutes * 60) + seconds;
+  }
+
+  // Handle MM:SS format
+  const [minutes, seconds] = parts;
   return minutes * 60 + seconds;
 };
 
-const formatSecondsToTime = (totalSeconds) => {
+const formatSecondsToTime = (totalSeconds, includeHours = false) => {
   if (typeof totalSeconds !== 'number' || isNaN(totalSeconds) || totalSeconds < 0) {
-    return '--:--'; 
+    return includeHours ? '--:--:--' : '--:--'; 
   }
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  
+  if (includeHours) {
+    // HH:MM:SS format
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  } else {
+    // MM:SS format
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
 };
 
 const breakTimer = ref('');
@@ -75,6 +94,22 @@ const startClock = () => {
     next_break_in: apiNextBreakInString
   } = tournament.value;
 
+  // Process next_break_in timer if available
+  if (typeof apiNextBreakInString === 'string' && apiNextBreakInString.includes(':')) {
+    try {
+      // Parse the time string to seconds
+      nextBreakInSeconds.value = parseTimeToSeconds(apiNextBreakInString);
+      
+      // Format in HH:MM:SS for next_break_in
+      nextBreakInTimerDisplay.value = formatSecondsToTime(nextBreakInSeconds.value, true);
+    } catch {
+      console.error('Failed to parse next_break_in:', apiNextBreakInString);
+      nextBreakInTimerDisplay.value = '--:--:--';
+    }
+  } else {
+    nextBreakInTimerDisplay.value = '--:--:--';
+  }
+
   if (clock_stopped) {
     if (clockInterval) clearInterval(clockInterval);
     clockInterval = null;
@@ -84,13 +119,13 @@ const startClock = () => {
     if (on_break) {
       timer.value = '--:--';
       try {
-        breakTimer.value = formatSecondsToTime(parseTimeToSeconds(apiBreakTimerString || "0:0"));
-      } catch { breakTimer.value = formatSecondsToTime(0); }
+        breakTimer.value = formatSecondsToTime(parseTimeToSeconds(apiBreakTimerString || "0:0"), false);
+      } catch { breakTimer.value = formatSecondsToTime(0, false); }
     } else { 
       breakTimer.value = '--:--';
       try {
-        timer.value = formatSecondsToTime(parseTimeToSeconds(apiTimerString || "0:0"));
-      } catch { timer.value = formatSecondsToTime(0); }
+        timer.value = formatSecondsToTime(parseTimeToSeconds(apiTimerString || "0:0"), false);
+      } catch { timer.value = formatSecondsToTime(0, false); }
     }
     return; 
   }
@@ -148,15 +183,15 @@ const startClock = () => {
 
       if (activeTimerType.value === 'main' && currentActiveTimerSeconds.value > 0) {
         currentActiveTimerSeconds.value--;
-        timer.value = formatSecondsToTime(currentActiveTimerSeconds.value);
+        timer.value = formatSecondsToTime(currentActiveTimerSeconds.value, false);
         if (nextBreakInSeconds.value > 0 && !on_break && !clock_stopped) {
           nextBreakInSeconds.value--;
-          nextBreakInTimerDisplay.value = formatSecondsToTime(nextBreakInSeconds.value);
+          nextBreakInTimerDisplay.value = formatSecondsToTime(nextBreakInSeconds.value, true);
         }
         if (currentActiveTimerSeconds.value === 0) mainTimerOrBreakTimerHitZero = true;
       } else if (activeTimerType.value === 'break' && currentActiveTimerSeconds.value > 0) {
         currentActiveTimerSeconds.value--;
-        breakTimer.value = formatSecondsToTime(currentActiveTimerSeconds.value);
+        breakTimer.value = formatSecondsToTime(currentActiveTimerSeconds.value, false);
         if (currentActiveTimerSeconds.value === 0) mainTimerOrBreakTimerHitZero = true;
       } else {
         mainTimerOrBreakTimerHitZero = true;
@@ -329,14 +364,16 @@ onUnmounted(() => {
             </div>
             
             <div class="next-blinds">
-              <div class="next-blinds-label">Next Blinds</div>
-              <div class="next-blinds-value">{{ formattedNextBlinds }}</div>
+              <div class="next-blinds-row">
+                <div class="next-blinds-label">Next Blinds</div>
+                <div class="next-blinds-value">{{ formattedNextBlinds }}</div>
+              </div>
             </div>
           </div>
         </div>
         
-        <!-- Right prize pool column -->
-        <div class="right-column">
+        <!-- Right prize pool column (hidden) -->
+        <div class="right-column" v-if="false">
           <!-- Prize pool -->
           <div class="prize-pool-container">
             <div class="prize-label">PRIZE POOL</div>
@@ -559,7 +596,7 @@ onUnmounted(() => {
 }
 
 .timer {
-  font-size: 49.25rem; /* 2x bigger than 24.625rem */
+  font-size: 19.25rem; /* 2x bigger than 24.625rem */
   font-weight: bold;
   line-height: 1;
 }
@@ -633,13 +670,21 @@ onUnmounted(() => {
   text-align: center;
 }
 
+.next-blinds-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
 .next-blinds-label {
   font-size: 2.27rem; /* 1.5x bigger than 1.5125rem */
-  margin-bottom: 0.3rem;
 }
 
 .next-blinds-value {
-  font-size: 1.8125rem;
+  font-size: 2.27rem;
+  color: yellow;
+  font-weight: bold;
 }
 
 /* Prize pool container styling */
@@ -671,7 +716,7 @@ onUnmounted(() => {
   }
   
   .tournament-title {
-    font-size: 3.3125rem;
+    font-size: 5.47rem;
   }
   
   .timer {

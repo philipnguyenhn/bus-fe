@@ -1,8 +1,8 @@
 // Live API call to fetch tournament details
 async function getTournamentById(id) {
   // Try both endpoints - first try screen, then fall back to clock if needed
-  const screenUrl = `${PROXIED_API_BASE_URL}/tournaments/${id}/screen`;
-  const clockUrl = `${PROXIED_API_BASE_URL}/tournaments/${id}/clock`;
+  const screenUrl = `${API_BASE_URL}/tournaments/${id}/screen`;
+  const clockUrl = `${API_BASE_URL}/tournaments/${id}/clock`;
   
   try {
     // First try the screen endpoint
@@ -65,7 +65,11 @@ async function getTournamentById(id) {
   }
 }
 
-const PROXIED_API_BASE_URL = '/api/v1'; // Use this for HTTP calls via Vite proxy
+// API base URLs
+const API_HOST = 'https://new.buscoffeeandtea.com.vn';
+// const API_HOST = 'http://localhost:8080';
+
+const API_BASE_URL = `${API_HOST}/api/v1`; // Direct API URL for production use
 
 // Named export for getTournamentById
 export { getTournamentById };
