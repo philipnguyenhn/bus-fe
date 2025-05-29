@@ -15,7 +15,7 @@ async function getTournamentById(id) {
         console.log('Successfully fetched data from screen endpoint');
         // Add mock prize pool data to the tournament data
         const tournamentData = screenResult.data;
-        tournamentData.prizePool = getMockPrizePool();
+        tournamentData.prizePool = getMockPrizePool(id);
         // Flag to always show prize pool for now (later will depend on current_level > reg_close_level)
         tournamentData.showPrizePool = true;
         return tournamentData;
@@ -82,16 +82,21 @@ const API_HOST = 'https://new.buscoffeeandtea.com.vn';
 const API_BASE_URL = `${API_HOST}/api/v1`; // Direct API URL for production use
 
 // Mock prize pool data until it's available from the API
-function getMockPrizePool() {
-  return [
-    { position: 1, amount: 10 },
-    { position: 2, amount: 8 },
-    { position: 3, amount: 7 },
-    { position: 4, amount: 6 },
-    { position: 5, amount: 5 },
-    { position: '6-8', amount: 4 },
-    { position: '9-12', amount: 3 }
-  ];
+function getMockPrizePool(id) {
+  if (id === 8){
+    return [
+      { position: 1, amount: 10 },
+      { position: 2, amount: 8 },
+      { position: 3, amount: 7 },
+      { position: 4, amount: 6 },
+      { position: 5, amount: 5 },
+      { position: '6-8', amount: 4 },
+      { position: '9-12', amount: 3 }
+    ];
+  } else {
+    return [];
+  }
+
 }
 
 // Named export for getTournamentById
