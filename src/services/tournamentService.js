@@ -75,7 +75,7 @@ async function getTournamentById(id) {
 }
 
 // API base URLs
-const API_HOST = 'https://new.buscoffeeandtea.com.vn';
+const API_HOST = 'https://api.buscoffeeandtea.com';
 // const API_HOST = 'http://localhost:8080';
 
 const API_BASE_URL = `${API_HOST}/api/v1`; // Direct API URL for production use
