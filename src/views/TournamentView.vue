@@ -435,6 +435,7 @@ onUnmounted(() => {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  max-width: 100%;
 }
 
 .loading, .error {
@@ -473,6 +474,9 @@ onUnmounted(() => {
   font-weight: bold;
   text-transform: uppercase;
   line-height: 1;
+  width: 60%;
+  max-width: 800px;
+  overflow: hidden;
 }
 
 .name-top, .name-bottom {
@@ -496,6 +500,16 @@ onUnmounted(() => {
 .info-value {
   font-weight: 800;
   color: white;
+}
+
+.tournament-title {
+  font-size: 3.33rem; /* Reduced to 2/3 of 5rem */
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .main-content {
@@ -719,28 +733,118 @@ onUnmounted(() => {
   }
   
   .tournament-title {
-    font-size: 5.47rem;
+    font-size: 2.67rem; /* Reduced to 2/3 of 4rem */
   }
-  
+
   .timer {
     font-size: 13.3125rem;
   }
-  
+
   .blind-value {
     font-size: 3.3125rem;
   }
-  
+
   .stat-label {
     font-size: 1.3125rem;
   }
-  
+
   .stat-value {
     font-size: 2.3125rem;
+  }
+}
+
+/* Additional responsive breakpoints for different screen sizes */
+@media (max-width: 1600px) {
+  .tournament-title {
+    font-size: 3rem; /* Reduced to 2/3 of 4.5rem */
+  }
+}
+
+@media (max-width: 1366px) {
+  .tournament-title {
+    font-size: 2.53rem; /* Reduced to 2/3 of 3.8rem */
+  }
+}
+
+@media (max-width: 1024px) {
+  .tournament-title {
+    font-size: 2.13rem; /* Reduced to 2/3 of 3.2rem */
+  }
+
+  .header {
+    padding: 0.4rem 1.5rem;
+  }
+
+  .current-time, .tournament-date {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tournament-title {
+    font-size: 1.67rem; /* Reduced to 2/3 of 2.5rem */
+  }
+
+  .header {
+    padding: 0.3rem 1rem;
+  }
+
+  .current-time, .tournament-date {
+    font-size: 1.8rem;
+  }
+}
+
+/* Handle extremely small screens */
+@media (max-width: 480px) {
+  .tournament-title {
+    font-size: 1.33rem; /* Reduced to 2/3 of 2rem */
+  }
+
+  .header {
+    flex-direction: column;
+    height: auto;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .current-time, .tournament-date {
+    font-size: 1.5rem;
   }
 }
 
 /* Highlight colors for key stats */
 .players-entries, .re-entries, .total-chips, .avg-stack, .prize-pool, .next-break {
   font-weight: bold;
+}
+
+/* Responsive prize pool adjustments */
+@media (max-width: 1366px) {
+  :deep(.prize-label) {
+    font-size: 1.6rem;
+  }
+
+  :deep(.prize-item) {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  :deep(.prize-label) {
+    font-size: 1.6rem;
+  }
+
+  :deep(.prize-item) {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-height: 800px) {
+  :deep(.prize-label) {
+    font-size: 1.6rem;
+  }
+
+  :deep(.prize-item) {
+    font-size: 1.4rem;
+  }
 }
 </style>
